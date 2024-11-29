@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problemas de Triángulos Rectángulos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #007bff;
+        }
+        .problem-section {
+            margin: 20px 0;
+        }
+        .problem {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fdfdfd;
+        }
+        canvas {
+            display: block;
+            margin: 10px auto;
+            border: 1px solid #ddd;
+            background: #fff;
+        }
+        button {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 15px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .solution {
+            margin-top: 10px;
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Problemas de Triángulos Rectángulos</h1>
+        <p>Explora los problemas y presiona el botón para resolverlos y visualizar los cálculos en el triángulo.</p>
+
+        <!-- Secciones dinámicas -->
+        <div id="problem-container"></div>
+    </div>
+
+    <script>
+        const problems = [
+            // Cálculo de ángulo θθ
+            { title: "Cálculo de ángulo θθ", description: "El cateto opuesto mide 6 m y el adyacente mide 8 m.", type: "angle", data: { opuesto: 6, adyacente: 8 } },
+            { title: "Cálculo de ángulo θθ", description: "El cateto opuesto mide 12 cm y la hipotenusa mide 13 cm.", type: "angle", data: { opuesto: 12, hipotenusa: 13 } },
+            { title: "Cálculo de ángulo θθ", description: "El cateto adyacente mide 7 m y la hipotenusa mide 25 m.", type: "angle", data: { adyacente: 7, hipotenusa: 25 } },
+            { title: "Cálculo de ángulo θθ", description: "El cateto opuesto mide 9 m y el cateto adyacente mide 12 m.", type: "angle", data: { opuesto: 9, adyacente: 12 } },
+
+            // Cálculo de la hipotenusa
+            { title: "Cálculo de la Hipotenusa", description: "Los catetos miden 5 m y 12 m.", type: "hipotenusa", data: { opuesto: 5, adyacente: 12 } },
+            { title: "Cálculo de la Hipotenusa", description: "El cateto opuesto mide 8 m y el ángulo θθ es 30°.", type: "hipotenusa", data: { opuesto: 8, angulo: 30 } },
+            { title: "Cálculo de la Hipotenusa", description: "El cateto adyacente mide 10 m y el ángulo θθ es 45°.", type: "hipotenusa", data: { adyacente: 10, angulo: 45 } },
+            { title: "Cálculo de la Hipotenusa", description: "El cateto opuesto mide 15 m y el ángulo θθ es 60°.", type: "hipotenusa", data: { opuesto: 15, angulo: 60 } },
+
+            // Cálculo del cateto opuesto
+            { title: "Cálculo del Cateto Opuesto", description: "El ángulo θ=45° y la hipotenusa es 10 m.", type: "opuesto", data: { hipotenusa: 10, angulo: 45 } },
+            { title: "Cálculo del Cateto Opuesto", description: "El cateto adyacente mide 9 m y el ángulo θ=30°.", type: "opuesto", data: { adyacente: 9, angulo: 30 } },
+            { title: "Cálculo del Cateto Opuesto", description: "La hipotenusa mide 20 m y sin(θ)=0.6.", type: "opuesto", data: { hipotenusa: 20, seno: 0.6 } },
+            { title: "Cálculo del Cateto Opuesto", description: "El ángulo θ=60° y la hipotenusa mide 12 cm.", type: "opuesto", data: { hipotenusa: 12, angulo: 60 } },
+
+            // Cálculo del cateto adyacente
+            { title: "Cálculo del Cateto Adyacente", description: "El cateto opuesto mide 6 m y el ángulo θ=53°.", type: "adyacente", data: { opuesto: 6, angulo: 53 } },
+            { title: "Cálculo del Cateto Adyacente", description: "La hipotenusa mide 15 m y el ángulo θ=37°.", type: "adyacente", data: { hipotenusa: 15, angulo: 37 } },
+            { title: "Cálculo del Cateto Adyacente", description: "La hipotenusa mide 10 m y cos(θ)=0.7.", type: "adyacente", data: { hipotenusa: 10, coseno: 0.7 } },
+            { title: "Cálculo del Cateto Adyacente", description: "El cateto opuesto mide 9 m y el ángulo θ=60°.", type: "adyacente", data: { opuesto: 9, angulo: 60 } },
+
+            // Otros problemas completos
+            { title: "Problema Completo", description: "La hipotenusa mide 25 cm y el cateto opuesto mide 24 cm. Encuentra el cateto adyacente y los ángulos.", type: "complete", data: { hipotenusa: 25, opuesto: 24 } },
+            { title: "Problema Completo", description: "El cateto opuesto mide 5 m y el cateto adyacente mide 12 m. Determina todo.", type: "complete", data: { opuesto: 5, adyacente: 12 } }
+        ];
+
+        const container = document.getElementById("problem-container");
+
+        problems.forEach((problem, index) => {
+            const problemDiv = document.createElement("div");
+            problemDiv.classList.add("problem");
+
+            problemDiv.innerHTML = `
+                <h2>${problem.title}</h2>
+                <p>${problem.description}</p>
+                <canvas id="canvas${index}" width="300" height="300"></canvas>
+                <button onclick="solveProblem(${index})">Resolver</button>
+                <div class="solution" id="solution${index}"></div>
+            `;
+            container.appendChild(problemDiv);
+
+            drawTriangle(index, problem.data);
+        });
+
+        function solveProblem(index) {
+            const problem = problems[index];
+            const solutionDiv = document.getElementById(`solution${index}`);
+            const { opuesto, adyacente, hipotenusa, angulo } = problem.data;
+
+            let solution = "";
+
+            if (problem.type === "angle") {
+                solution = `Ángulo θ: ${(Math.atan(opuesto / adyacente) * 180 / Math.PI).toFixed(2)}°`;
+            } else if (problem.type === "hipotenusa") {
+                solution = `Hipotenusa: ${(Math.sqrt(opuesto ** 2 + adyacente ** 2)).toFixed(2)} m`;
+            } else if (problem.type === "opuesto") {
+                solution = `Cateto Opuesto: ${(Math.sin(angulo * Math.PI / 180) * hipotenusa).toFixed(2)} m`;
+            } else if (problem.type === "adyacente") {
+                solution = `Cateto Adyacente: ${(Math.cos(angulo * Math.PI / 180) * hipotenusa).toFixed(2)} m`;
+            } else if (problem.type === "complete") {
+                const hip = Math.sqrt(opuesto ** 2 + adyacente ** 2);
+                const angulo1 = Math.atan(opuesto / adyacente) * (180 / Math.PI);
+                const angulo2 = 90 - angulo1;
+                solution = `
+                    Hipotenusa: ${hip.toFixed(2)} m<br>
+                    Ángulo 1: ${angulo1.toFixed(2)}°<br>
+                    Ángulo 2: ${angulo2.toFixed(2)}°
+                `;
+            }
+
+            solutionDiv.innerHTML = solution;
+        }
+
+        function drawTriangle(index, data) {
+            const canvas = document.getElementById(`canvas${index}`);
+            const ctx = canvas.getContext("2d");
+
+            const scale = 30;
+            const opuesto = data.opuesto || 0;
+            const adyacente = data.adyacente || 0;
+
+            ctx.beginPath();
+            ctx.moveTo(50, 250); // Punto de inicio
+            ctx.lineTo(50, 250 - opuesto * scale); // Lado opuesto
+            ctx.lineTo(50 + adyacente * scale, 250); // Lado adyacente
+            ctx.closePath();
+            ctx.stroke();
+        }
+    </script>
+</body>
+</html>
